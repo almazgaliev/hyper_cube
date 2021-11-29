@@ -10,7 +10,7 @@ from vis import draw_lines
 
 
 def angle_fom_index(frame_index):
-    return frame_index * 2
+    return frame_index
 
 
 class HyperCubeAnimation():
@@ -32,7 +32,7 @@ class HyperCubeAnimation():
                                        init_func=self.__first_frame,
                                        frames=self.frames,
                                        blit=True,
-                                       interval=5)
+                                       interval=10)
 
     def run(self):
         plt.show()
@@ -41,7 +41,8 @@ class HyperCubeAnimation():
     def save(self, filepath: str):
         if not filepath.endswith(".gif"):
             filepath += ".gif"
-        print("Saving animation...")  # https://github.com/matplotlib/matplotlib/issues/6985#issuecomment-242860920
+        # https://github.com/matplotlib/matplotlib/issues/6985#issuecomment-242860920
+        print("Saving animation...")
         self.animation.save(filepath, writer='imagemagick')
         print(f"Animation saved to {filepath}")
 
@@ -61,11 +62,12 @@ class HyperCubeAnimation():
         angle = angle_fom_index(frame)
         # ! rotation matrix order is important !
         rotation = create_transform_arr([
-            rotate_arr(angle, dim=4, axes=[0, 2], use_proj=True),
-            rotate_arr(angle, dim=4, axes=[0, 3], use_proj=True),
-            rotate_arr(angle, dim=4, axes=[1, 2], use_proj=True),
-            rotate_arr(angle, dim=4, axes=[0, 1], use_proj=True),
             rotate_arr(angle, dim=4, axes=[2, 3], use_proj=True),
+            rotate_arr(angle, dim=4, axes=[1, 3], use_proj=True),
+            rotate_arr(angle, dim=4, axes=[1, 2], use_proj=True),
+            rotate_arr(angle, dim=4, axes=[0, 3], use_proj=True),
+            rotate_arr(angle, dim=4, axes=[0, 2], use_proj=True),
+            rotate_arr(angle, dim=4, axes=[0, 1], use_proj=True),
         ])
         vertexes = multiply(self.vertexes, rotation)
         self.img = self.background.copy()
@@ -88,6 +90,6 @@ if __name__ == "__main__":
     base_color = (125, 120, 255)
     base_color = (255, 0, 0)
 
-    anim = HyperCubeAnimation([width, height, 3], obj, 180)
+    anim = HyperCubeAnimation([width, height, 3], obj, 360)
     anim.run()
     # anim.save("out.gif")
